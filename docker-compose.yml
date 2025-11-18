@@ -1,31 +1,19 @@
-# docker-compose.yml
-version: "3.8"
 
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v2.11
     command:
+      - --api.insecure=true
       - --api.dashboard=true
       - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.myresolver.acme.httpchallenge=true
-      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
-      - --certificatesresolvers.myresolver.acme.email=your-email@example.com
-      - --certificatesresolvers.myresolver.acme.storage=/acme.json
     ports:
       - "80:80"
-      - "443:443"
-      - "8080:8080"  # داشبورد Traefik
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/acme.json:/acme.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.local`)"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.entrypoints=web"
+    restart: unless-stopped
 
   postgres:
     image: postgres:16-alpine
@@ -35,21 +23,29 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
   wordpress:
     image: wordpress:latest
     environment:
-      WORDPRESS_DB_HOST: ${WP_DB_HOST}
+      WORDPRESS_DB_HOST: postgres
       WORDPRESS_DB_USER: ${WP_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WP_DB_NAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.wordpress.rule=Host(`wordpress.local`)"
       - "traefik.http.routers.wordpress.entrypoints=web"
-    depends_on:
-      - postgres
+      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
     restart: unless-stopped
 
 volumes:
