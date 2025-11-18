@@ -1,3 +1,4 @@
+version: "3.8"
 
 services:
   traefik:
@@ -15,31 +16,31 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
-  postgres:
-    image: postgres:16-alpine
+  mariadb:
+    image: mariadb:10.11
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: ${WP_DB_NAME}
+      MYSQL_USER: ${WP_DB_USER}
+      MYSQL_PASSWORD: ${WP_DB_PASSWORD}
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - mariadb_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
       interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 10s
     restart: unless-stopped
 
   wordpress:
     image: wordpress:latest
     environment:
-      WORDPRESS_DB_HOST: postgres
+      WORDPRESS_DB_HOST: mariadb:3306
       WORDPRESS_DB_USER: ${WP_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WP_DB_NAME}
     depends_on:
-      postgres:
+      mariadb:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
@@ -49,4 +50,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  pg_data:
+  mariadb_data:
