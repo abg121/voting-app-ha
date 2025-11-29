@@ -1,0 +1,130 @@
+services:
+  redis-a:
+    image: redis:7-alpine
+    container_name: redis-a
+    command: redis-server --appendonly yes --port 6379
+    volumes:
+      - redis-data-a:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - redis-network
+
+  redis-b:
+    image: redis:7-alpine
+    container_name: redis-b
+    command: redis-server --appendonly yes --port 6379 --replicaof redis-a 6379
+    volumes:
+      - redis-data-b:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    depends_on:
+      - redis-a
+    networks:
+      - redis-network
+
+  redis-c:
+    image: redis:7-alpine
+    container_name: redis-c
+    command: redis-server --appendonly yes --port 6379 --replicaof redis-a 6379
+    volumes:
+      - redis-data-c:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    depends_on:
+      - redis-a
+    networks:
+      - redis-network
+
+  redis-sentinel1:
+    image: redis:7-alpine
+    container_name: redis-sentinel1
+    volumes:
+      - ./sentinel-init.sh:/sentinel-init.sh
+    command: ["sh", "/sentinel-init.sh"]
+    ports:
+      - "26379:26379"
+    depends_on:
+      - redis-a
+    networks:
+      - redis-network
+
+  redis-sentinel2:
+    image: redis:7-alpine
+    container_name: redis-sentinel2
+    volumes:
+      - ./sentinel-init.sh:/sentinel-init.sh
+    command: ["sh", "/sentinel-init.sh"]
+    depends_on:
+      - redis-a
+    networks:
+      - redis-network
+
+  redis-sentinel3:
+    image: redis:7-alpine
+    container_name: redis-sentinel3
+    volumes:
+      - ./sentinel-init.sh:/sentinel-init.sh
+    command: ["sh", "/sentinel-init.sh"]
+    depends_on:
+      - redis-a
+    networks:
+      - redis-network
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - "./healthchecks:/healthchecks"
+    ports:
+      - "6379:6379"    
+    healthcheck:
+      test: /healthchecks/redis.sh
+      interval: "5s"
+    networks:
+      voting-app-network:
+        aliases:
+          - redis
+      
+
+  redis-proxy:
+    image: haproxy:2.9-alpine
+    container_name: redis-proxy
+    restart: unless-stopped
+    ports:
+      - "16379:6379"
+    volumes:
+      - ./haproxy/redis-haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:rw 
+    depends_on:
+      - redis-sentinel1
+      - redis-sentinel2
+      - redis-sentinel3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    networks:
+      redis-network:
+#      voting-app-network:
+#        aliases:
+#          - redis
+
+volumes:
+  redis-data-a:
+  redis-data-b:
+  redis-data-c:
+
+networks:
+  redis-network:
+    external: false
+  voting-app-network:
+    external: true
+    name: voting-app-network

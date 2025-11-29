@@ -1,0 +1,4 @@
+crontab -e
+
+0 2 * * * /home/ubuntu/git/voting-app-ha/backup/backup_script.sh
+

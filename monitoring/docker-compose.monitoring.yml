@@ -1,0 +1,131 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - default
+      - monitoring        
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
+      - "traefik.http.routers.prometheus.entrypoints=web"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"      
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - default
+      - monitoring
+    restart: unless-stopped
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"      
+
+  grafana-init:
+    image: curlimages/curl:latest
+    container_name: grafana-init
+    depends_on:
+      - grafana
+    volumes:
+      - ./grafana/provisioning:/provisioning
+    command:
+      - sh
+      - -c
+      - |
+        echo "🕒 Waiting for Grafana..."
+        sleep 30
+        sh /provisioning/import-dashboards.sh
+    networks:
+      - default
+    restart: "no"
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - default
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:postgres@postgres-primary:5432/postgres?sslmode=disable
+    networks:
+      - default
+    restart: unless-stopped
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://redis-master:6379
+    networks:
+      - default
+    restart: unless-stopped
+
+  voting-app-exporter:
+    build:
+      context: ./
+      dockerfile: Dockerfile.voting-exporter
+    container_name: voting-app-exporter
+    ports:
+      - "18082:8080"
+    environment:
+      - VOTE_URL=http://vote:80
+      - RESULT_URL=http://result:80
+    networks:
+      - default
+    restart: unless-stopped
+
+
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: voting-app-ha_default
+    external: true     
+  monitoring:
+    external: true
+    name: monitoring    
