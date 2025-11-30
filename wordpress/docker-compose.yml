@@ -1,0 +1,55 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wp-app
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql-db
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME', 'http://${WORDPRESS_DOMAIN}');
+        define('WP_SITEURL', 'http://${WORDPRESS_DOMAIN}');
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      - db
+    networks:
+      - default
+      - voting-app-ha_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wp-blog.rule=Host(`${WORDPRESS_DOMAIN}`)"
+      - "traefik.http.routers.wp-blog.entrypoints=web"
+      - "traefik.http.services.wp-blog.loadbalancer.server.port=80"
+    env_file:
+      - .env
+
+  db:
+    image: mysql:8.0
+    container_name: wp-db
+    hostname: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./database:/var/lib/mysql
+      - ./db-backup:/docker-entrypoint-initdb.d
+      - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      default:
+        aliases:
+          - mysql-db
+    env_file:
+      - .env
+
+networks:
+  default:
+    driver: bridge
+  voting-app-ha_default:
+    external: true

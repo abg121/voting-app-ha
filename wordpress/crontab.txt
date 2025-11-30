@@ -1,0 +1,8 @@
+# Load environment and run daily database backup at 2 AM
+0 2 * * * cd /path/to/wordpress-site && ./backup-db.sh >> ./backups/backup.log 2>&1
+
+# Weekly full backup on Sunday at 3 AM
+0 3 * * 0 cd /path/to/wordpress-site && ./backup-full.sh >> ./backups/backup.log 2>&1
+
+# Log rotation monthly
+0 0 1 * * find /path/to/wordpress-site/backups -name "*.log" -mtime +30 -delete
