@@ -133,5 +133,7 @@ voting-app-ha/
 
 ## Author    
 GitHub: @abg121
+
 Production-ready • Fully tested • Zero-downtime capable
+
 Happy voting!
