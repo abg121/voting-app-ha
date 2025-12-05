@@ -1,0 +1,129 @@
+{
+  "id": null,
+  "title": "Elasticsearch Overview",
+  "tags": [
+    "elasticsearch",
+    "elk",
+    "monitoring"
+  ],
+  "timezone": "browser",
+  "panels": [
+    {
+      "title": "Cluster Health Status",
+      "type": "stat",
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "elasticsearch_cluster_health_status{color=\"green\"}",
+          "legendFormat": "GREEN",
+          "refId": "A"
+        },
+        {
+          "expr": "elasticsearch_cluster_health_status{color=\"yellow\"}",
+          "legendFormat": "YELLOW",
+          "refId": "B"
+        },
+        {
+          "expr": "elasticsearch_cluster_health_status{color=\"red\"}",
+          "legendFormat": "RED",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Number of Nodes",
+      "type": "stat",
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "elasticsearch_cluster_health_number_of_nodes",
+          "legendFormat": "Nodes",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "JVM Heap Usage",
+      "type": "graph",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "targets": [
+        {
+          "expr": "elasticsearch_jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "{{name}} Heap Used (MB)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Active Shards",
+      "type": "stat",
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 14
+      },
+      "targets": [
+        {
+          "expr": "elasticsearch_cluster_health_active_shards",
+          "legendFormat": "Active Shards",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Document Count",
+      "type": "stat",
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 14
+      },
+      "targets": [
+        {
+          "expr": "elasticsearch_indices_docs_total",
+          "legendFormat": "Documents",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 27,
+  "uid": "620edf96"
+}
