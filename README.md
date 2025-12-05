@@ -96,18 +96,38 @@ docker exec pg-backup ls -lh /backups
 
 ## Project Structure
 voting-app-ha/
-├── backup/              # PostgreSQL backup scripts
-├── postgres-init/       # Primary & replica initialization
-├── redis/               # Redis cluster + Sentinel + HAProxy
-├── haproxy/             # HAProxy configs
-├── traefik/             # Traefik reverse proxy
-├── monitoring/          # Prometheus + Grafana + ELK
-├── voting-app/          # Vote, Worker, Result apps
-├── wordpress/           # WordPress + MySQL
-├── docker-compose.yml   # Main orchestration
-└── README.md            # This file
+├── backup/                  # PostgreSQL backup scripts
+│   ├── simple-pg-backup.sh
+│   └── backup-cron
+├── postgres-init/           # Primary & replica initialization
+│   ├── primary-init.sh
+│   └── replica-init.sh
+├── redis/                   # Redis HA cluster + Sentinel + HAProxy
+│   ├── docker-compose.yml
+│   ├── haproxy/
+│   │   ├── redis-haproxy.cfg
+│   │   └── update-redis-master.sh
+│   ├── sentinel.conf
+│   └── sentinel-init.sh
+├── haproxy/                 # General HAProxy config (if any)
+├── traefik/                 # Traefik reverse proxy
+├── monitoring/              # Prometheus + Grafana + ELK Stack
+│   ├── docker-compose.monitoring.yml
+│   ├── prometheus/
+│   ├── grafana/
+│   └── elk/
+├── voting-app/              # Voting App source code
+│   ├── vote/                # Flask Vote frontend
+│   ├── result/              # Node.js Result backend
+│   ├── worker/              # .NET Worker
+│   └── seed-data/
+├── wordpress/               # WordPress + MySQL (optional demo)
+├── docker-compose.yml       # Main orchestration file
+├── .env.example             # Environment variables template
+├── switch-primary.sh        # PostgreSQL failover helper
+└── README.md                # This file
 
-## Author
+## Author    
 GitHub: @abg121
 Production-ready • Fully tested • Zero-downtime capable
 Happy voting!
