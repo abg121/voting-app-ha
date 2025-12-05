@@ -23,15 +23,16 @@ A production-grade, fully functional voting application with complete high-avail
 
 ## Architecture
 ----------------
-Clients
-↓
-Traefik (80, 443, 5432, 6379)
-├──→ HAProxy → Redis Cluster + Sentinel
-├──→ PostgreSQL Primary/Replica (via Patroni or scripts)
-└──→ Voting App (Vote, Worker, Result)
-↓
-Monitoring → Grafana / Prometheus
-Logging   → Kibana / Elasticsearch
+flowchart TD
+    A[Client] --> B(Traefik)
+    B --> C[Vote :5000]
+    B --> D[Result :5001]
+    B --> E[PostgreSQL :5432]
+    B --> F[Redis :6379 via HAProxy]
+    E --> G[(Primary)]
+    E --> H[(Replica1)]
+    E --> I[(Replica2)]
+    F --> J[(Redis Cluster + Sentinel)]
 
 
 ## Quick Start
