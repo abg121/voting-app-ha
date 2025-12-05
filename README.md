@@ -8,7 +8,7 @@ Production-grade voting application with full high-availability for databases an
 ![Traefik](https://img.shields.io/badge/Traefik-24B7A3?logo=traefikmesh&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
 
-## Features
+# Features
 - PostgreSQL HA (1 Primary + 2 Replicas with streaming replication)
 - Redis HA (3 nodes + 3 Sentinels + HAProxy automatic failover < 10s)
 - Traefik reverse proxy (HTTP + TCP)
@@ -19,7 +19,7 @@ Production-grade voting application with full high-availability for databases an
 - Automated daily PostgreSQL backup (7-day retention)
 - Zero-downtime capable
 
-## Architecture
+# Architecture
 
 ```mermaid
 flowchart TD
@@ -61,7 +61,7 @@ flowchart TD
     style HP fill:#dc3545,stroke:#fff,color:#fff
 ```
 
-## Quick Start
+# Quick Start
 ```
 git clone https://github.com/abg121/voting-app-ha.git
 cd voting-app-ha
@@ -69,7 +69,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-## Access URLs
+# Access URLs
 
 | Service            | URL                              | Public Address
 |--------------------|----------------------------------|------------------------------------|
@@ -82,22 +82,25 @@ docker compose up -d
 | PostgreSQL         | your-server:5432                 |                                    |
 | Redis (via HAProxy)| your-server:6379                 |                                    |
 
-## Failover Test
-# Kill PostgreSQL primary
+# Failover Test
+## Kill PostgreSQL primary
+```
 docker stop postgres-primary && sleep 20
 psql -h your-server -p 5432 -U postgres -c "SELECT now();"
-
-# Kill Redis master
+```
+## Kill Redis master
+```
 docker stop redis-a && sleep 15
 redis-cli -h your-server -p 6379 PING   # Still returns PONG!
+```
 
-## Automated Backup
+# Automated Backup
 ```
 docker exec pg-backup /backup/simple-pg-backup.sh
 docker exec pg-backup ls -lh /backups
 ```
 
-## Project Structure
+# Project Structure
 ```markdown
 voting-app-ha/
 ├── backup/                          # PostgreSQL backup scripts
@@ -132,7 +135,7 @@ voting-app-ha/
 └── README.md                        # This file
 ```
 
-## Author    
+# Author    
 GitHub: @abg121
 
 Production-ready • Fully tested • Zero-downtime capable
