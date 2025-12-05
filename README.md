@@ -59,5 +59,23 @@ flowchart TD
     style B fill:#24B7A3,stroke:#fff,color:#fff
     style G fill:#28a745,stroke:#fff,color:#fff
     style HP fill:#dc3545,stroke:#fff,color:#fff
+```
 
 ## Quick Start
+git clone https://github.com/abg121/voting-app-ha.git
+cd voting-app-ha
+cp .env.example .env
+docker compose up -d
+
+## Access URLs
+```
+Service,URL,Credentials
+Vote App,http://your-server:5000,—
+Result App,http://your-server:5001,—
+WordPress,http://your-server:8080/wordpress,admin / admin
+Grafana,http://your-server:3000,admin / admin
+Kibana,http://your-server:5601,—
+Traefik Dashboard,http://your-server:8080,—
+PostgreSQL,your-server:5432,user: postgres
+Redis (via HAProxy),your-server:6379,no password
+```
