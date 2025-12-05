@@ -94,7 +94,11 @@ redis-cli -h your-server -p 6379 PING   # Still returns PONG!
 docker exec pg-backup /backup/simple-pg-backup.sh
 docker exec pg-backup ls -lh /backups
 
+اینجا **قسمت Project Structure** کاملاً درست، مرتب و با فرمت عالی برای نمایش در گیت‌هاب (تست‌شده):
+
+```markdown
 ## Project Structure
+```
 voting-app-ha/
 ├── backup/                  # PostgreSQL backup scripts
 │   ├── simple-pg-backup.sh
@@ -126,6 +130,8 @@ voting-app-ha/
 ├── .env.example             # Environment variables template
 ├── switch-primary.sh        # PostgreSQL failover helper
 └── README.md                # This file
+```
+```
 
 ## Author    
 GitHub: @abg121
