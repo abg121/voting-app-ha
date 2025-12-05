@@ -79,3 +79,34 @@ Traefik Dashboard,http://your-server:8080,—
 PostgreSQL,your-server:5432,user: postgres
 Redis (via HAProxy),your-server:6379,no password
 ```
+
+## Failover Test
+# Kill PostgreSQL primary
+docker stop postgres-primary && sleep 20
+psql -h your-server -p 5432 -U postgres -c "SELECT now();"
+
+# Kill Redis master
+docker stop redis-a && sleep 15
+redis-cli -h your-server -p 6379 PING   # Still returns PONG!
+
+## Automated Backup
+docker exec pg-backup /backup/simple-pg-backup.sh
+docker exec pg-backup ls -lh /backups
+
+## Project Structure
+voting-app-ha/
+├── backup/              # PostgreSQL backup scripts
+├── postgres-init/       # Primary & replica initialization
+├── redis/               # Redis cluster + Sentinel + HAProxy
+├── haproxy/             # HAProxy configs
+├── traefik/             # Traefik reverse proxy
+├── monitoring/          # Prometheus + Grafana + ELK
+├── voting-app/          # Vote, Worker, Result apps
+├── wordpress/           # WordPress + MySQL
+├── docker-compose.yml   # Main orchestration
+└── README.md            # This file
+
+## Author
+GitHub: @abg121
+Production-ready • Fully tested • Zero-downtime capable
+Happy voting!
