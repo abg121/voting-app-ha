@@ -99,36 +99,36 @@ docker exec pg-backup ls -lh /backups
 ## Project Structure
 ```markdown
 voting-app-ha/
-├── backup/                  # PostgreSQL backup scripts
+├── backup/                          # PostgreSQL backup scripts
 │   ├── simple-pg-backup.sh
 │   └── backup-cron
-├── postgres-init/           # Primary & replica initialization
+├── postgres-init/                   # Primary & replica initialization
 │   ├── primary-init.sh
 │   └── replica-init.sh
-├── redis/                   # Redis HA cluster + Sentinel + HAProxy
+├── redis/                           # Redis HA cluster + Sentinel + HAProxy
 │   ├── docker-compose.yml
 │   ├── haproxy/
 │   │   ├── redis-haproxy.cfg
 │   │   └── update-redis-master.sh
 │   ├── sentinel.conf
 │   └── sentinel-init.sh
-├── haproxy/                 # General HAProxy config (if any)
-├── traefik/                 # Traefik reverse proxy
-├── monitoring/              # Prometheus + Grafana + ELK Stack
+├── haproxy/                         # General HAProxy config (if any)
+├── traefik/                         # Traefik reverse proxy
+├── monitoring/                      # Prometheus + Grafana + ELK Stack
 │   ├── docker-compose.monitoring.yml
 │   ├── prometheus/
 │   ├── grafana/
 │   └── elk/
-├── voting-app/              # Voting App source code
-│   ├── vote/                # Flask Vote frontend
-│   ├── result/              # Node.js Result backend
-│   ├── worker/              # .NET Worker
+├── voting-app/                      # Voting App source code
+│   ├── vote/                        # Flask Vote frontend
+│   ├── result/                      # Node.js Result backend
+│   ├── worker/                      # .NET Worker
 │   └── seed-data/
-├── wordpress/               # WordPress + MySQL (optional demo)
-├── docker-compose.yml       # Main orchestration file
-├── .env.example             # Environment variables template
-├── switch-primary.sh        # PostgreSQL failover helper
-└── README.md                # This file
+├── wordpress/                       # WordPress + MySQL (optional demo)
+├── docker-compose.yml               # Main orchestration file
+├── .env.example                     # Environment variables template
+├── switch-primary.sh                # PostgreSQL failover helper
+└── README.md                        # This file
 ```
 
 ## Author    
