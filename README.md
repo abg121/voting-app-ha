@@ -92,9 +92,10 @@ docker stop redis-a && sleep 15
 redis-cli -h your-server -p 6379 PING   # Still returns PONG!
 
 ## Automated Backup
+```
 docker exec pg-backup /backup/simple-pg-backup.sh
 docker exec pg-backup ls -lh /backups
-
+```
 
 ## Project Structure
 ```markdown
