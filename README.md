@@ -62,12 +62,11 @@ flowchart TD
 ```
 
 ## Quick Start
-git clone https://github.com/abg121/voting-app-ha.git
-cd voting-app-ha
-cp .env.example .env
-docker compose up -d
+. git clone https://github.com/abg121/voting-app-ha.git
+. cd voting-app-ha
+. cp .env.example .env
+. docker compose up -d
 
-## Access URLs
 ## Access URLs
 
 | Service            | URL                              | Public Address
