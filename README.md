@@ -68,7 +68,7 @@ cp .env.example .env
 docker compose up -d
 
 ## Access URLs
-```
+```table
 Service,URL,Credentials
 Vote App,http://your-server:5000,—
 Result App,http://your-server:5001,—
