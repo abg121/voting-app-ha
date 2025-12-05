@@ -1,0 +1,150 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Voting App - Master Overview",
+    "tags": ["overview", "monitoring", "summary"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "System Health",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 4, "x": 0, "y": 0},
+        "targets": [{
+          "expr": "up{job=\"node-exporter\"}",
+          "legendFormat": "Node",
+          "refId": "A"
+        }]
+      },
+      {
+        "title": "Redis Health",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 4, "x": 4, "y": 0},
+        "targets": [{
+          "expr": "redis_up",
+          "legendFormat": "Redis",
+          "refId": "A"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "PostgreSQL Health",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 4, "x": 8, "y": 0},
+        "targets": [{
+          "expr": "pg_up",
+          "legendFormat": "PostgreSQL",
+          "refId": "A"
+        }]
+      },
+      {
+        "title": "Voting App Health",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 4, "x": 12, "y": 0},
+        "targets": [{
+          "expr": "voting_app_up{service=\"vote\"}",
+          "legendFormat": "Vote Service",
+          "refId": "A"
+        }, {
+          "expr": "voting_app_up{service=\"result\"}",
+          "legendFormat": "Result Service",
+          "refId": "B"
+        }]
+      },
+      {
+        "title": "Elasticsearch Health",
+        "type": "stat",
+        "gridPos": {"h": 6, "w": 4, "x": 16, "y": 0},
+        "targets": [{
+          "expr": "elasticsearch_cluster_health_status{color=\"green\"}",
+          "legendFormat": "ES Status",
+          "refId": "A"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"value": 0, "text": "RED"},
+              {"value": 1, "text": "YELLOW"},
+              {"value": 2, "text": "GREEN"}
+            ]
+          }
+        }
+      },
+      {
+        "title": "System CPU Usage",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 6},
+        "targets": [{
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "System Memory Usage",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 6},
+        "targets": [{
+          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 85}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Redis Memory Usage",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 6},
+        "targets": [{
+          "expr": "redis_memory_used_bytes / redis_memory_max_bytes * 100",
+          "legendFormat": "Redis",
+          "refId": "A"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 85}
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "schemaVersion": 27
+  }
+}

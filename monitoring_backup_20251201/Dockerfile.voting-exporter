@@ -1,0 +1,10 @@
+FROM python:3.9-alpine
+
+WORKDIR /app
+COPY voting-app-exporter.py .
+
+RUN pip install requests
+
+EXPOSE 8080
+
+CMD ["python", "voting-app-exporter.py"]

@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.mobilish.ir`)"
       - "traefik.http.routers.prometheus.entrypoints=web"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"      
 
@@ -39,8 +39,9 @@ services:
       - default
       - monitoring
     restart: unless-stopped
+    labels:  
       - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.mobilish.ir`)"
       - "traefik.http.routers.grafana.entrypoints=web"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"      
 
@@ -60,6 +61,7 @@ services:
         sh /provisioning/import-dashboards.sh
     networks:
       - default
+      - monitoring        
     restart: "no"
 
   node-exporter:
@@ -78,6 +80,7 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     networks:
       - default
+      - monitoring        
     restart: unless-stopped
 
   postgres-exporter:
@@ -89,6 +92,7 @@ services:
       - DATA_SOURCE_NAME=postgresql://postgres:postgres@postgres-primary:5432/postgres?sslmode=disable
     networks:
       - default
+      - monitoring        
     restart: unless-stopped
 
   redis-exporter:
@@ -97,9 +101,10 @@ services:
     ports:
       - "9121:9121"
     environment:
-      - REDIS_ADDR=redis://redis-master:6379
+      - REDIS_ADDR=redis://redis-proxy:6379
     networks:
       - default
+      - monitoring        
     restart: unless-stopped
 
   voting-app-exporter:
@@ -110,12 +115,23 @@ services:
     ports:
       - "18082:8080"
     environment:
-      - VOTE_URL=http://vote:80
+      - VOTE_URL=http://voting-app-vote:80
       - RESULT_URL=http://result:80
     networks:
       - default
+      - monitoring  
     restart: unless-stopped
 
+  elasticsearch-exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: elasticsearch-exporter
+    command: ["--es.uri=http://elasticsearch:9200"]
+    ports:
+      - "9114:9114"
+    networks:
+      - default
+      - monitoring
+    restart: unless-stopped
 
 
 volumes:

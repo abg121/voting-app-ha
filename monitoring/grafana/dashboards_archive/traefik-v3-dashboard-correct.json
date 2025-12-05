@@ -1,0 +1,28 @@
+{
+  "dashboard": {
+    "title": "Traefik v3 Official",
+    "uid": "traefik-v3-official",
+    "timezone": "browser",
+    "schemaVersion": 37,
+    "version": 0,
+    "refresh": "30s",
+    "panels": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  },
+  "inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "value": "Prometheus"
+    }
+  ],
+  "overwrite": true,
+  "message": "Traefik v3 Official Dashboard"
+}

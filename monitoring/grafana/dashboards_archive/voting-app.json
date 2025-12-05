@@ -1,0 +1,51 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Voting App Monitoring",
+    "tags": ["voting", "application"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Voting App Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "voting_app_up{service=\"vote\"}",
+            "legendFormat": "Vote Service"
+          },
+          {
+            "expr": "voting_app_up{service=\"result\"}",
+            "legendFormat": "Result Service"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"value": null, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Exporter Requests",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(voting_app_requests_total[5m])",
+            "legendFormat": "Requests Rate"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      }
+    ],
+    "time": {"from": "now-6h", "to": "now"},
+    "version": 1
+  }
+}
