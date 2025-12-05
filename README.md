@@ -70,16 +70,16 @@ docker compose up -d
 ## Access URLs
 ## Access URLs
 
-| Service            | URL                              |
-|--------------------|----------------------------------|
-| Vote App           | http://your-server:5000          |
-| Result App         | http://your-server:5001          |
-| WordPress          | http://your-server:8080/wordpress|
-| Grafana            | http://your-server:3000          |
-| Kibana             | http://your-server:5601          |
-| Traefik Dashboard  | http://your-server:8080          |
-| PostgreSQL         | your-server:5432                 |
-| Redis (via HAProxy)| your-server:6379                 |
+| Service            | URL                              | Public Address
+|--------------------|----------------------------------|------------------------------------|
+| Vote App           | http://your-server:5000          |                                    |
+| Result App         | http://your-server:5001          |                                    |
+| WordPress          | http://your-server:8080/wordpress|                                    |
+| Grafana            | http://your-server:3000          |                                    |
+| Kibana             | http://your-server:5601          |                                    |
+| Traefik Dashboard  | http://your-server:8080          |                                    |
+| PostgreSQL         | your-server:5432                 |                                    |
+| Redis (via HAProxy)| your-server:6379                 |                                    |
 
 ## Failover Test
 # Kill PostgreSQL primary
