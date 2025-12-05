@@ -1,7 +1,7 @@
-![Docker Compose](https://img.shields.io/badge/Docker%20Compose-1.0-blue)
+![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2.0-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-green)
 ![Redis](https://img.shields.io/badge/Redis-7-red)
-![Traefik](https://img.shields.io/badge/Traefik-v2.11-orange)
+![Traefik](https://img.shields.io/badge/Traefik-v3.6.1-orange)
 # Voting App with High Availability (HA)
 -----------------------------------------
 A production-grade, fully functional voting application with complete high-availability for databases and services — built with Docker Compose.
